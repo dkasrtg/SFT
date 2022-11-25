@@ -15,8 +15,8 @@ public class Frame extends JFrame {
     Send sendPanel;
     Receive receivePanel;
 
-    public Frame() throws Exception{
-        setPort();
+    public Frame(int port) throws Exception{
+        setPort(port);
         setTransfer(new Transfer());
         setReceivePanel(new Receive(this));
         setSendPanel(new Send(this));
@@ -109,8 +109,6 @@ public class Frame extends JFrame {
     public JButton getSend() {
         return send;
     }
-
-
 
     public JPanel getChoice() {
         return choice;

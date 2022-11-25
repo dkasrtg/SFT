@@ -4,7 +4,7 @@ import server.Server;
 
 import javax.swing.*;
 import java.awt.*;
-import java.io.IOException;
+import java.io.File;
 import java.net.Inet4Address;
 
 public class Receive extends JPanel  implements Runnable{
@@ -13,10 +13,12 @@ public class Receive extends JPanel  implements Runnable{
     Frame frame;
     Server server;
     boolean turn;
+    String default_path;
     public Receive(Frame frame) throws Exception {
         setSelf();
         setFrame(frame);
         setTurn(false);
+        setDefault_path();
     }
 
     public void setTurn(boolean turn) {
@@ -93,11 +95,22 @@ public class Receive extends JPanel  implements Runnable{
                 String g = getServer().getDataInputStream().readUTF();
                 g = g.substring(g.lastIndexOf("\\")+1);
                 getFrame().getReceivePanel().getInfo().setText(g + " from "+getServer().getClient().getRemoteSocketAddress().toString());
-                getFrame().getTransfer().receive("C:\\Users\\itu\\IdeaProjects\\SFT\\received\\"+g, getServer().getDataInputStream());
+                getFrame().getTransfer().receive(getDefault_path()+g, getServer().getDataInputStream());
 
             } catch (Exception e) {
                 e.printStackTrace();
             }
         }
+    }
+    public void setDefault_path(){
+        File file = new File("C:\\received");
+        if (!file.exists()){
+            file.mkdir();
+        }
+        this.default_path  = "C:\\received\\";
+    }
+
+    public String getDefault_path() {
+        return default_path;
     }
 }
