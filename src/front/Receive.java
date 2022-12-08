@@ -1,5 +1,7 @@
 package front;
 
+//https://github.com/dkasrtg/SFT.git
+
 import server.Server;
 
 import javax.swing.*;
@@ -98,7 +100,7 @@ public class Receive extends JPanel  implements Runnable{
                 getFrame().getTransfer().receive(getDefault_path()+g, getServer().getDataInputStream());
 
             } catch (Exception e) {
-                e.printStackTrace();
+//                e.printStackTrace();
             }
         }
     }
@@ -109,7 +111,6 @@ public class Receive extends JPanel  implements Runnable{
         }
         this.default_path  = "C:\\received\\";
     }
-
     public String getDefault_path() {
         return default_path;
     }
