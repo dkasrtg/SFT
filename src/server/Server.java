@@ -1,74 +1,76 @@
 package server;
 
-import transfer.Transfer;
-
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
-import java.net.Inet4Address;
+import javax.swing.*;
+import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.HashSet;
+import java.util.Set;
 
-public class Server {
-    ServerSocket serverSocket;
-    Socket client;
-    DataOutputStream dataOutputStream;
-    DataInputStream dataInputStream;
-    Transfer transfer;
-    String address;
-    public Server(int port) throws Exception{
-        setServerSocket(new ServerSocket(port));
-        setClient(getServerSocket().accept());
-        setDataInputStream(new DataInputStream(getClient().getInputStream()));
-        setDataOutputStream(new DataOutputStream(getClient().getOutputStream()));
-        setTransfer(new Transfer());
-        setAddress(Inet4Address.getLocalHost().getHostAddress());
+public class Server extends SwingWorker {
+    Back back;
+    Set<String> clients_name;
+    Set<ClientThread> clientThreads;
+    public Server(Back back){
+        setBack(back);
+        setClientThreads(new HashSet<>());
+        setClients_name(new HashSet<>());
     }
 
-    public void setServerSocket(ServerSocket serverSocket) {
-        this.serverSocket = serverSocket;
+    @Override
+    protected Object doInBackground() throws Exception {
+        ServerSocket serverSocket = new ServerSocket(getBack().getPort());
+        getBack().add_text("Server launched at port "+getBack().getPort());
+        while (true){
+            Socket socket = serverSocket.accept();
+            ClientThread clientThread  = new ClientThread(this,socket);
+            getClientThreads().add(clientThread);
+            clientThread.execute();
+        }
+    }
+    public void setBack(Back back) {
+        this.back = back;
     }
 
-    public void setDataInputStream(DataInputStream dataInputStream) {
-        this.dataInputStream = dataInputStream;
+    public Back getBack() {
+        return back;
     }
 
-    public void setDataOutputStream(DataOutputStream dataOutputStream) {
-        this.dataOutputStream = dataOutputStream;
+    public void setClientThreads(Set<ClientThread> clientThreads) {
+        this.clientThreads = clientThreads;
     }
 
-    public void setClient(Socket client) {
-        this.client = client;
+    public void setClients_name(Set<String> clients_name) {
+        this.clients_name = clients_name;
     }
 
-    public void setAddress(String address) {
-        this.address = address;
+    public Set<String> getClients_name() {
+        return clients_name;
     }
 
-    public void setTransfer(Transfer transfer) {
-        this.transfer = transfer;
+    public Set<ClientThread> getClientThreads() {
+        return clientThreads;
     }
 
-    public DataOutputStream getDataOutputStream() {
-        return dataOutputStream;
+    public String availables_files(){
+        String rs = "LIST-";
+        for (int i=0;i<getBack().getFiles().size()-1;i++){
+            rs += getBack().getFiles().get(i) + "-";
+        }
+        rs += getBack().getFiles().get(getBack().getFiles().size()-1);
+        return rs;
     }
-
-    public DataInputStream getDataInputStream() {
-        return dataInputStream;
+    public void removeUser(String userName, ClientThread clientThread) {
+        boolean removed = getClients_name().remove(userName);
+        if (removed) {
+            getClientThreads().remove(clientThread);
+        }
     }
-
-    public Socket getClient() {
-        return client;
-    }
-
-    public ServerSocket getServerSocket() {
-        return serverSocket;
-    }
-
-    public String getAddress() {
-        return address;
-    }
-
-    public Transfer getTransfer() {
-        return transfer;
+    public void tell_all_client_to_refresh() throws IOException {
+        for (ClientThread clientThread : getClientThreads()){
+            System.out.println(availables_files());
+            clientThread.getDataOutputStream().writeUTF("REFRESH;"+availables_files());
+            System.out.println("avac");
+        }
     }
 }

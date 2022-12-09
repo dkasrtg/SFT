@@ -1,57 +1,97 @@
 package client;
 
-import transfer.Transfer;
-
+import javax.swing.*;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
+import java.io.PrintWriter;
 import java.net.Socket;
+import java.util.Vector;
 
-public class Client {
-    Socket server;
-    DataInputStream dataInputStream;
+public class Client extends SwingWorker {
+    Back back;
     DataOutputStream dataOutputStream;
-    Transfer transfer;
-    public Client(String address, int port) throws Exception{
-        setServer(new Socket(address, port));
-        setDataInputStream(new DataInputStream(getServer().getInputStream()));
-        setDataOutputStream(new DataOutputStream(getServer().getOutputStream()));
-        setTransfer(new Transfer());
-    }
-    public void close() throws Exception{
-        getDataInputStream().close();
-        getDataOutputStream().close();
-        getServer().close();
-    }
-
-    public void setServer(Socket server) {
-        this.server = server;
-    }
-
-    public void setTransfer(Transfer transfer) {
-        this.transfer = transfer;
-    }
-
-    public void setDataInputStream(DataInputStream dataInputStream) {
-        this.dataInputStream = dataInputStream;
+    DataInputStream dataInputStream;
+    PrintWriter printWriter;
+    String name;
+    public Client(Back back,String name){
+        setBack(back);
+        setName(name);
     }
 
     public void setDataOutputStream(DataOutputStream dataOutputStream) {
         this.dataOutputStream = dataOutputStream;
     }
 
-    public DataInputStream getDataInputStream() {
-        return dataInputStream;
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getName() {
+        return name;
     }
 
     public DataOutputStream getDataOutputStream() {
         return dataOutputStream;
     }
 
-    public Transfer getTransfer() {
-        return transfer;
+    public void setBack(Back back) {
+        this.back = back;
     }
 
-    public Socket getServer() {
-        return server;
+    public Back getBack() {
+        return back;
+    }
+
+    public void setPrintWriter(PrintWriter printWriter) {
+        this.printWriter = printWriter;
+    }
+
+    public PrintWriter getPrintWriter() {
+        return printWriter;
+    }
+
+    public void setDataInputStream(DataInputStream dataInputStream) {
+        this.dataInputStream = dataInputStream;
+    }
+
+    public DataInputStream getDataInputStream() {
+        return dataInputStream;
+    }
+
+    @Override
+    protected Object doInBackground() throws Exception {
+        Socket socket = new Socket(getBack().getHost(),getBack().getPort());
+        setDataOutputStream(new DataOutputStream(socket.getOutputStream()));
+        setDataInputStream(new DataInputStream(socket.getInputStream()));
+        setPrintWriter(new PrintWriter(getDataOutputStream()));
+        getDataOutputStream().writeUTF(getName());
+        while (true){
+            String data =  getDataInputStream().readUTF();
+            System.out.println(data);
+            if (data.contains("LIST") && !data.contains("REFRESH")){
+                getBack().setAvailable_files(new Vector<>());
+                String[] all = data.split("-");
+                for (int i=1;i<all.length;i++){
+                    getBack().getAvailable_files().add(all[i]);
+                }
+                System.out.println(getBack().getAvailable_files());
+                getBack().getFront().getReceivePanel().setSelf();
+            }
+            else if (data.contains("DOWNLOAD")){
+                System.out.println("dddd1");
+                getBack().receive(data.split("-")[1],getDataInputStream());
+                getBack().getFront().getReceivePanel().add_text(data.split("-")[1] +" received successfully");
+            }
+            else if (data.contains("REFRESH")){
+                System.out.println("clref");
+                String p = data.split(";")[1];
+                String[] all = p.split("-");
+                getBack().setAvailable_files(new Vector<>());
+                for (int i=1;i<all.length;i++){
+                    getBack().getAvailable_files().add(all[i]);
+                }
+                getBack().refresh();
+            }
+        }
     }
 }
