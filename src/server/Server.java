@@ -1,76 +1,96 @@
 package server;
 
+import datacenter.Back;
+
 import javax.swing.*;
+import java.io.File;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.HashSet;
 import java.util.Set;
 
 public class Server extends SwingWorker {
     Back back;
-    Set<String> clients_name;
+    Set<String> clientNames;
     Set<ClientThread> clientThreads;
-    public Server(Back back){
+    int port;
+    String path;
+    public Server(Back back,int port){
         setBack(back);
+        setClientNames(new HashSet<>());
         setClientThreads(new HashSet<>());
-        setClients_name(new HashSet<>());
+        setPort(port);
+        setPath(getBack().getPath()+"\\"+getPort());
     }
 
-    @Override
-    protected Object doInBackground() throws Exception {
-        ServerSocket serverSocket = new ServerSocket(getBack().getPort());
-        getBack().add_text("Server launched at port "+getBack().getPort());
-        while (true){
-            Socket socket = serverSocket.accept();
-            ClientThread clientThread  = new ClientThread(this,socket);
-            getClientThreads().add(clientThread);
-            clientThread.execute();
+    public void setPath(String path) {
+        this.path = path;
+        File file = new File(getPath());
+        if (!file.exists()){
+            file.mkdir();
         }
     }
+
+    public String getPath() {
+        return path;
+    }
+
+    public void setPort(int port) {
+        this.port = port;
+    }
+
+    public int getPort() {
+        return port;
+    }
+
     public void setBack(Back back) {
         this.back = back;
     }
 
-    public Back getBack() {
-        return back;
+    public void setClientNames(Set<String> clientNames) {
+        this.clientNames = clientNames;
     }
 
     public void setClientThreads(Set<ClientThread> clientThreads) {
         this.clientThreads = clientThreads;
     }
 
-    public void setClients_name(Set<String> clients_name) {
-        this.clients_name = clients_name;
-    }
-
-    public Set<String> getClients_name() {
-        return clients_name;
-    }
-
     public Set<ClientThread> getClientThreads() {
         return clientThreads;
     }
 
-    public String availables_files(){
-        String rs = "LIST-";
-        for (int i=0;i<getBack().getFiles().size()-1;i++){
-            rs += getBack().getFiles().get(i) + "-";
-        }
-        rs += getBack().getFiles().get(getBack().getFiles().size()-1);
-        return rs;
+    public Set<String> getClientNames() {
+        return clientNames;
     }
-    public void removeUser(String userName, ClientThread clientThread) {
-        boolean removed = getClients_name().remove(userName);
-        if (removed) {
+
+    public Back getBack() {
+        return back;
+    }
+
+    @Override
+    protected Object doInBackground() throws Exception {
+        ServerSocket serverSocket = new ServerSocket(getPort());
+        getBack().text_output("Server started successfully at port "+getPort());
+        while (true){
+            Socket socket = serverSocket.accept();
+            ClientThread clientThread = new ClientThread(socket,this);
+            getClientThreads().add(clientThread);
+            clientThread.execute();
+        }
+    }
+    public void removeClient(String name,ClientThread clientThread){
+        if (getClientNames().remove(name)){
             getClientThreads().remove(clientThread);
         }
     }
-    public void tell_all_client_to_refresh() throws IOException {
+    public void tell_all_clients_to_refresh(ClientThread excluded) throws Exception {
         for (ClientThread clientThread : getClientThreads()){
-            System.out.println(availables_files());
-            clientThread.getDataOutputStream().writeUTF("REFRESH;"+availables_files());
-            System.out.println("avac");
+            if (clientThread!=excluded){
+                clientThread.getDataOutputStream().writeUTF("REFRESH_AVAILABLE;"+getBack().get_available_files(getPath()));
+            }
         }
     }
 }

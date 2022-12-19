@@ -4,7 +4,6 @@ import client.Front;
 
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
-import java.io.IOException;
 
 public class ClientWindow implements WindowListener {
     Front front;
@@ -27,15 +26,12 @@ public class ClientWindow implements WindowListener {
     }
 
     @Override
-    public void windowClosing(WindowEvent e) {
+    public void windowClosing(WindowEvent e){
         try {
-            System.out.println("q1");
-            getFront().getBack().getClient().getDataOutputStream().writeUTF("QUIT-"+getFront().getBack().getClient().getName());
-            System.out.println("q2");
-            getFront().dispose();
-        } catch (IOException ex) {
-            throw new RuntimeException(ex);
-        }
+            getFront().getBack().writeUTF("REMOVE-"+getFront().getClient().getName());
+        } catch (Exception ignored) {}
+        getFront().getTimer().stop();
+        getFront().dispose();
     }
 
     @Override

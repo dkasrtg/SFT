@@ -3,30 +3,70 @@ package client;
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
-import java.util.Vector;
 
 public class ReceivePanel extends JPanel {
-    Front front;
-    Vector<String> text;
-    JTable list;
-    JPanel for_table;
+    MainPanel mainPanel ;
+    JTable table;
     JButton download;
-    public ReceivePanel(Front front){
-        setFront(front);
-        setSize(400,350);
+    String[][] list;
+    JPanel table_container;
+    public ReceivePanel(MainPanel mainPanel){
+        setDownload(new JButton("DOWNLOAD"));
+        setMainPanel(mainPanel);
+        setSize(300,210);
+        setLocation(50,150);
         setLayout(null);
-        setLocation(0,50);
-        setBackground(Color.black);
-        setText(new Vector<>());
-        setFor_table(new JPanel());
-        getFor_table().setSize(250,250);
-        getFor_table().setLocation(75,75);
-        getFor_table().setLayout(new BorderLayout());
-        add(getFor_table());
-        setDownload(new JButton("Download"));
-        getDownload().setSize(100,40);
-        getDownload().setLocation(270,20);
+        setBackground(Color.GRAY);
+        getDownload().setText("DOWNLOAD");
+        getDownload().setSize(120,40);
+        getDownload().setLocation(90,10);
         add(getDownload());
+        setTable();
+        setTable_container(new JPanel());
+        getTable_container().setSize(200,150);
+        getTable_container().setLocation(50,50);
+        getTable_container().setLayout(new BorderLayout());
+        add(getTable_container());
+        if (getTable()!=null){
+            JScrollPane jScrollPane = new JScrollPane(getTable());
+            getTable_container().add(jScrollPane,BorderLayout.CENTER);
+        }
+    }
+
+    public void setTable_container(JPanel table_container) {
+        this.table_container = table_container;
+    }
+
+    public JPanel getTable_container() {
+        return table_container;
+    }
+
+    public void setList(String[][] list) {
+        this.list = list;
+    }
+
+    public String[][] getList() {
+        return list;
+    }
+
+    public void setMainPanel(MainPanel mainPanel) {
+        this.mainPanel = mainPanel;
+    }
+
+    public void setTable() {
+        if (getList()==null){
+            setList(new String[][]{});
+        }
+        DefaultTableModel defaultTableModel = new DefaultTableModel(getList(),new String[]{"List"});
+        this.table = new JTable(defaultTableModel);
+    }
+
+    public MainPanel getMainPanel() {
+        return mainPanel;
+    }
+
+    public JTable getTable() {
+        return table;
     }
 
     public void setDownload(JButton download) {
@@ -35,68 +75,5 @@ public class ReceivePanel extends JPanel {
 
     public JButton getDownload() {
         return download;
-    }
-
-    public void setFor_table(JPanel for_table) {
-        this.for_table = for_table;
-    }
-
-    public JPanel getFor_table() {
-        return for_table;
-    }
-
-    public void setSelf(){
-        setList();
-        JScrollPane scrollPane = new JScrollPane(getList());
-        getFor_table().add(scrollPane,BorderLayout.CENTER);
-    }
-
-    public void setText(Vector<String> text) {
-        this.text = text;
-    }
-
-    public Vector<String> getText() {
-        return text;
-    }
-    public void add_text(String text){
-        if (getText().size()==2){
-            getText().removeElementAt(0);
-        }
-        getText().add(text);
-    }
-
-    public void setFront(Front front) {
-        this.front = front;
-    }
-
-    public Front getFront() {
-        return front;
-    }
-
-    public void setList() {
-        String[][] data = new String[getFront().getBack().getAvailable_files().size()][1];
-        for (int i=0;i<data.length;i++){
-            data[i][0] = getFront().getBack().getAvailable_files().get(i);
-        }
-        DefaultTableModel defaultTableModel = new DefaultTableModel(data,new String[]{"List"});
-        this.list = new JTable(defaultTableModel);
-    }
-
-    public JTable getList() {
-        return list;
-    }
-
-    @Override
-    protected void paintComponent(Graphics g) {
-        super.paintComponent(g);
-        Graphics2D graphics2D = (Graphics2D) g;
-        graphics2D.setColor(Color.white);
-        graphics2D.setFont(new Font(Font.SANS_SERIF,Font.BOLD,15));
-        graphics2D.drawString("RECEIVE",300,15);
-        int y = 15;
-        for (int i=0;i<getText().size();i++){
-            graphics2D.drawString(getText().get(i),10,y);
-            y += 20;
-        }
     }
 }

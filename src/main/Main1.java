@@ -1,9 +1,9 @@
 package main;
 
-import server.Front;
+import datacenter.DataCenter;
 
 public class Main1 {
-    public static void main(String[] args) throws Exception {
-        new Front();
+    public static void main(String[] args) throws Exception{
+        new DataCenter();
     }
 }
