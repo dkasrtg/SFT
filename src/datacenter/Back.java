@@ -15,12 +15,19 @@ public class Back {
     String path;
     public Back(DataCenter dataCenter) throws Exception{
         setDataCenter(dataCenter);
-        setPath("F:\\Test\\server");
+        setPath();
         setServers(new Vector<>());
     }
 
-    public void setPath(String path) {
-        this.path = path;
+    public void setPath() {
+        JFileChooser jFileChooser = new JFileChooser();
+        jFileChooser.setDialogTitle("Choose directory for stocking files");
+        jFileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+        jFileChooser.setAcceptAllFileFilterUsed(false);
+        jFileChooser.showOpenDialog(getDataCenter());
+        System.out.println(jFileChooser.getSelectedFile().getAbsolutePath());
+        this.path = jFileChooser.getSelectedFile().getAbsolutePath();
+//        this.path = "F:\\Test\\server";
     }
 
     public String getPath() {
@@ -29,8 +36,17 @@ public class Back {
 
     public void setServers(Vector<Server> servers) throws Exception {
         this.servers = servers;
-        String opt = JOptionPane.showInputDialog(null,"Enter the number of server to launch");
-        int nb = Integer.parseInt(opt);
+        boolean test = false;
+        int nb = 0;
+        while (!test) {
+            try {
+                String opt = JOptionPane.showInputDialog(null, "Enter the number of server to launch");
+                nb = Integer.parseInt(opt);
+                if (nb>0) {
+                    test = true;
+                }
+            }catch (Exception e){}
+        }
         for (int i=0;i<nb;i++){
             getServers().add(new Server(this,2020+i));
             getServers().get(i).execute();

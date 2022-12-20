@@ -23,7 +23,7 @@ public class Back {
     }
     public void setPath() {
         JFileChooser jFileChooser = new JFileChooser();
-        jFileChooser.setDialogTitle("Path for receiving files");
+        jFileChooser.setDialogTitle("Choose directory for receiving files");
         jFileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
         jFileChooser.setAcceptAllFileFilterUsed(false);
         jFileChooser.showOpenDialog(getFront());
