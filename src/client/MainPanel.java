@@ -18,6 +18,10 @@ public class MainPanel extends JPanel {
         setButton(new JButton("RECEIVE"));
         getButton().setSize(100,40);
         getButton().setLocation(250,10);
+        getButton().setFocusPainted(false);
+        getButton().setBackground(new Color(59,89,192));
+        getButton().setFont(new Font("Tahoma",Font.BOLD,12));
+        getButton().setForeground(Color.WHITE);
         add(getButton());
         add(getSendPanel());
     }
@@ -59,7 +63,7 @@ public class MainPanel extends JPanel {
         super.paintComponent(g);
         Graphics2D graphics2D = (Graphics2D) g;
         graphics2D.setColor(Color.white);
-        graphics2D.setFont(new Font(Font.DIALOG,Font.ITALIC,15));
+        graphics2D.setFont(new Font(Font.SERIF,Font.ITALIC,15));
         int y = 15;
         for (int i=0;i<getFront().getBack().getText().size();i++){
             graphics2D.drawString(getFront().getBack().getText().get(i),10,y);

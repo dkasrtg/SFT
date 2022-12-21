@@ -15,7 +15,7 @@ public class Front extends JFrame {
     ClientTimerAction clientTimerAction;
     Timer timer;
     public Front() throws Exception{
-        setLocation(500,10);
+        setLocation(700,10);
         setLayout(null);
         setSize(400,400);
         setBack(new Back(this));

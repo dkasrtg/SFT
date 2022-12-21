@@ -83,7 +83,7 @@ public class Back {
                 Socket socket = new Socket("localhost",i);
                 socket.getInputStream();
                 getSockets().add(socket);
-                text_output("Connect to server "+i);
+                text_output("Connected to server "+i);
                 i++;
             }
             catch (Exception e){

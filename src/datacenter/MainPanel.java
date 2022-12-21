@@ -26,7 +26,7 @@ public class MainPanel extends JPanel {
         super.paintComponent(g);
         Graphics2D graphics2D = (Graphics2D) g;
         graphics2D.setColor(Color.white);
-        graphics2D.setFont(new Font(Font.DIALOG,Font.ITALIC,15));
+        graphics2D.setFont(new Font(Font.SERIF,Font.ITALIC,15));
         int y = 15;
         for (int i=0;i<getDataCenter().getBack().getText().size();i++){
             graphics2D.drawString(getDataCenter().getBack().getText().get(i),10,y);

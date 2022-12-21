@@ -16,7 +16,7 @@ public class ClientThread extends SwingWorker {
         setDataInputStream(new DataInputStream(getSocket().getInputStream()));
         setDataOutputStream(new DataOutputStream(getSocket().getOutputStream()));
         System.out.println(getServer().getPort());
-        getServer().getBack().text_output(getServer().getPort()+" - New client "+getDataInputStream().readUTF()+" connected");
+        getServer().getBack().text_output(getServer().getPort()+" : New client "+getDataInputStream().readUTF()+" connected");
         System.out.println(getServer().getPort()+"a");
     }
 
@@ -58,14 +58,14 @@ public class ClientThread extends SwingWorker {
             String message = getDataInputStream().readUTF();
             if (message.contains("REMOVE")){
                 String name = message.split("-")[1];
-                getServer().getBack().text_output(getServer().getPort()+" - Client "+name+" quit ");
+                getServer().getBack().text_output(getServer().getPort()+" : Client "+name+" quit ");
                 getServer().removeClient(name,this);
             }
             else if (message.contains("RECEIVE")){
                 String fn = message.split(";")[1];
                 String name = message.split(";")[2];
                 getServer().getBack().receive(name,getServer().getPath(),getDataInputStream());
-                getServer().getBack().text_output(getServer().getPort()+" - "+ name + " received from "+fn);
+                getServer().getBack().text_output(getServer().getPort()+" : "+ name + " received from "+fn);
                 getServer().tell_all_clients_to_refresh(this);
             }
             else if (message.contains("AVAILABLE")){
@@ -75,7 +75,7 @@ public class ClientThread extends SwingWorker {
                 String name = message.split(";")[1];
                 String fn = message.split(";")[2];
                 getServer().getBack().send(getServer().getPath(),fn,getDataOutputStream());
-                getServer().getBack().text_output(getServer().getPort()+" - "+"Client "+name+" downloaded "+fn);
+                getServer().getBack().text_output(getServer().getPort()+" : "+"Client "+name+" downloaded "+fn);
             }
         }
     }

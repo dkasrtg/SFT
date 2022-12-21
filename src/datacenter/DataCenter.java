@@ -12,7 +12,7 @@ public class DataCenter extends JFrame {
     DataCenterTimerAction dataCenterTimerAction;
     DataCenterWindow dataCenterWindow;
     public DataCenter() throws Exception{
-        setLocation(1000,10);
+        setLocation(100,10);
         setBack(new Back(this));
         setMainPanel(new MainPanel(this));
         setSize(400,400);

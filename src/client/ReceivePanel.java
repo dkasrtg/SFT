@@ -20,6 +20,10 @@ public class ReceivePanel extends JPanel {
         getDownload().setText("DOWNLOAD");
         getDownload().setSize(120,40);
         getDownload().setLocation(90,10);
+        getDownload().setFocusPainted(false);
+        getDownload().setBackground(new Color(59,89,192));
+        getDownload().setFont(new Font("Tahoma",Font.BOLD,12));
+        getDownload().setForeground(Color.WHITE);
         add(getDownload());
         setTable();
         setTable_container(new JPanel());
