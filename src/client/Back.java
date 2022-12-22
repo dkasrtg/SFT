@@ -15,8 +15,10 @@ public class Back {
     Vector<DataOutputStream> dataOutputStreams;
     Vector<String> text;
     String path;
+    String host;
     public Back(Front front) throws Exception{
         setFront(front);
+        setHost();
         setSockets(new Vector<>());
         setDataInputStreams(new Vector<>());
         setDataOutputStreams(new Vector<>());
@@ -29,6 +31,14 @@ public class Back {
         jFileChooser.showOpenDialog(getFront());
         System.out.println(jFileChooser.getSelectedFile().getAbsolutePath());
         this.path = jFileChooser.getSelectedFile().getAbsolutePath();
+    }
+
+    public void setHost() {
+        this.host = JOptionPane.showInputDialog(null,"Enter the host address");;
+    }
+
+    public String getHost() {
+        return host;
     }
 
     public String getPath() {
@@ -80,7 +90,7 @@ public class Back {
         int i=2020;
         while (test){
             try {
-                Socket socket = new Socket("localhost",i);
+                Socket socket = new Socket(getHost(),i);
                 socket.getInputStream();
                 getSockets().add(socket);
                 text_output("Connected to server "+i);
